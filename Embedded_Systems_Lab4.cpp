@@ -12,6 +12,7 @@
 #define NUMBER_OF_AVG_SAMPLES                   100
 #define OVER_TEMP_LEVEL                         50
 #define TIME_INCREMENT_MS                       10
+#define High_Gas_Level                          1000 // Senor reads from 200 - 5000 ppm
 
 //=====[Declaration and initialization of public global objects]===============
 
@@ -21,7 +22,7 @@ DigitalIn aButton(D4);
 DigitalIn bButton(D5);
 DigitalIn cButton(D6);
 DigitalIn dButton(D7);
-DigitalIn mq2(PE_12);
+//DigitalIn mq2(PE_12);
 
 DigitalOut alarmLed(LED1);
 DigitalOut incorrectCodeLed(LED3);
@@ -56,6 +57,7 @@ float lm35ReadingsSum      = 0.0;
 float lm35ReadingsArray[NUMBER_OF_AVG_SAMPLES];
 float lm35TempC            = 0.0;
 float GasSen0127Read = 0.0;
+float Gas_Level = 0.0;
 
 //=====[Declarations (prototypes) of public functions]=========================
 
@@ -130,7 +132,7 @@ void alarmActivationUpdate()
         overTempDetector = OFF;
     }
 
-    if( !mq2) {
+    if( Gas_Level > High_Gas_level ) {
         gasDetectorState = ON;
         alarmState = ON;
     }
@@ -378,5 +380,5 @@ float celsiusToFahrenheit( float tempInCelsiusDegrees )
 }
 float GasSen0127V(float analogRead)
 {
-    return (analogRead*480+200);
+    return (analogRead*4800);
 }
