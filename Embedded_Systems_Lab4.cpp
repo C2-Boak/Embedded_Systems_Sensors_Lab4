@@ -132,7 +132,7 @@ void alarmActivationUpdate()
         overTempDetector = OFF;
     }
 
-    if( Gas_Level > High_Gas_level ) {
+    if( Gas_Level > High_Gas_Level ) {
         gasDetectorState = ON;
         alarmState = ON;
     }
