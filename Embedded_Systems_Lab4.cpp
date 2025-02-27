@@ -216,7 +216,7 @@ void uartTask()
 
             case '2':
                 if ( gasDetectorState ) {
-                    uartUsb.write( "Gas is being detected, enter 'g' for more detail. \r\n", 22);
+                    uartUsb.write( "Gas is being detected, enter 'g' for more detail.\r\n", 51);
                 } else {
                     uartUsb.write( "Gas is not being detected\r\n", 27);
                 }
@@ -306,7 +306,7 @@ void uartTask()
             case 'p':
             case 'P':
                 potentiometerReading = potentiometer.read();
-                sprintf ( str, "Potentiometer: %.2f\r\n", potentiometerReading );
+                sprintf ( str, "Potentiometer: %.2f \r\n", potentiometerReading );
                 stringLength = strlen(str);
                 uartUsb.write( str, stringLength );
                 break;
@@ -329,7 +329,7 @@ void uartTask()
             case 'g':
             case 'G':
                 GasSen0127Read = GasSen0127.read();
-                sprintf ( str, "Gas Quantity: %.2PPM \xB0 F\r\n",
+                sprintf ( str, "Gas Quantity: %.2f \xB0 ppm\r\n",
                           GasSen0127V( GasSen0127Read ) );
                 stringLength = strlen(str);
                 uartUsb.write( str, stringLength );
