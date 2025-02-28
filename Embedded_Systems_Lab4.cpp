@@ -59,6 +59,8 @@ float lm35TempC            = 0.0;
 float GasSen0127Read = 0.0;
 float Gas_Level = 0.0;
 
+
+
 //=====[Declarations (prototypes) of public functions]=========================
 
 void inputsInit();
@@ -85,6 +87,7 @@ int main()
         alarmDeactivationUpdate();
         uartTask();
         delay(TIME_INCREMENT_MS);
+
     }
 }
 
@@ -130,9 +133,16 @@ void alarmActivationUpdate()
         overTempDetector = ON;
     } else {
         overTempDetector = OFF;
+
+    }
+    if ( GasSen0127V(GasSen0127Read)> High_Gas_Level ) {
+        GasSen0127Read = GasSen0127.read();
+        gasDetectorState = ON;
+    } else {
+        gasDetectorState = OFF;
     }
 
-    if( Gas_Level > High_Gas_Level ) {
+    if( gasDetectorState){
         gasDetectorState = ON;
         alarmState = ON;
     }
