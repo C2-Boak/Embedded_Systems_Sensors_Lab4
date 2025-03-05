@@ -359,7 +359,22 @@ void uartTask()
 
     accumulatedTime += TIME_INCREMENT_MS;
 
-    if (accumulatedTime >= 2000) {
+    if (accumulatedTime >= 5000) {
+
+        if (alarmState) {
+            if (gasDetectorState) {
+
+                uartUsb.write("Alarm activated: Gas detection\r\n", 32);
+            } else if (overTempDetector) {
+
+                uartUsb.write("Alarm activated: Temperature outside operating range\r\n", 54);
+            }
+        }
+
+        potentiometerReading = potentiometer.read();
+        sprintf ( str, "Potentiometer: %.2f \r\n", potentiometerReading );
+        stringLength = strlen(str);
+        uartUsb.write( str, stringLength );
 
         sprintf(str, "Temperature: %.2f Degree C\r\n", lm35TempC);
         stringLength = strlen(str);
