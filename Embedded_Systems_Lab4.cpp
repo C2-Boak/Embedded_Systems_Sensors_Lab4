@@ -83,6 +83,7 @@ int main()
     inputsInit();
     outputsInit();
     while (true) {
+
         alarmActivationUpdate();
         alarmDeactivationUpdate();
         uartTask();
@@ -135,8 +136,10 @@ void alarmActivationUpdate()
         overTempDetector = OFF;
 
     }
-    if ( GasSen0127V(GasSen0127Read)> High_Gas_Level ) {
-        GasSen0127Read = GasSen0127.read();
+    Gas_Level = (GasSen0127V(GasSen0127.read()));
+
+    if ( Gas_Level > High_Gas_Level ) {
+
         gasDetectorState = ON;
     } else {
         gasDetectorState = OFF;
@@ -213,6 +216,7 @@ void uartTask()
     char receivedChar = '\0';
     char str[100];
     int stringLength;
+    static int accumulatedTime = 0;
     if( uartUsb.readable() ) {
         uartUsb.read( &receivedChar, 1 );
         switch (receivedChar) {
@@ -323,14 +327,15 @@ void uartTask()
 
             case 'c':
             case 'C':
-                sprintf ( str, "Temperature: %.2f \xB0 C\r\n", lm35TempC );
+                sprintf ( str, "Temperature: %.2f Degree C\r\n", lm35TempC );
                 stringLength = strlen(str);
                 uartUsb.write( str, stringLength );
+
                 break;
 
             case 'f':
             case 'F':
-                sprintf ( str, "Temperature: %.2f \xB0 F\r\n",
+                sprintf ( str, "Temperature: %.2f Degree F\r\n",
                           celsiusToFahrenheit( lm35TempC ) );
                 stringLength = strlen(str);
                 uartUsb.write( str, stringLength );
@@ -339,7 +344,7 @@ void uartTask()
             case 'g':
             case 'G':
                 GasSen0127Read = GasSen0127.read();
-                sprintf ( str, "Gas Quantity: %.2f \xB0 ppm\r\n",
+                sprintf ( str, "Gas Quantity: %.2f  ppm\r\n",
                           GasSen0127V( GasSen0127Read ) );
                 stringLength = strlen(str);
                 uartUsb.write( str, stringLength );
@@ -348,10 +353,28 @@ void uartTask()
             default:
                 availableCommands();
                 break;
-
         }
     }
+
+
+    accumulatedTime += TIME_INCREMENT_MS;
+
+    if (accumulatedTime >= 2000) {
+
+        sprintf(str, "Temperature: %.2f Degree C\r\n", lm35TempC);
+        stringLength = strlen(str);
+        uartUsb.write(str, stringLength);
+
+
+        GasSen0127Read = GasSen0127.read();
+        sprintf(str, "Gas Quantity: %.2f ppm\r\n", GasSen0127V(GasSen0127Read));
+        stringLength = strlen(str);
+        uartUsb.write(str, stringLength);
+
+        accumulatedTime = 0;
+    }
 }
+
 
 void availableCommands()
 {
